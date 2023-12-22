@@ -662,5 +662,3 @@ Base de dados - https://www.kaggle.com/datasets/nelgiriyewithana/billionaires-st
 Matheus Donito (22/1018307) - Relatório, gráficos e formatação 
 
 João Pedro Vieira (22/1018281) - Relatório e tabelas 
-
-Lara Siqueira (22/1029122) - Apoio  
