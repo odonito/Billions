@@ -56,6 +56,5 @@ output:
 \section{Referências}
 \section{Apêndice}
 \subsection{Figuras}
-\subsection{Participação dos integrantes}
 
 \end{document}
