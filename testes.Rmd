@@ -55,7 +55,6 @@ output:
 \subsubsection{Patrimônio entre os países}
 \section{Referências}
 \section{Apêndice}
-\subsection{Tabelas}
 \subsection{Figuras}
 \subsection{Participação dos integrantes}
 
