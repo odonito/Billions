@@ -1,0 +1,62 @@
+---
+output:
+  pdf_document:
+    toc: true
+  word_document: default
+  html_document: default
+  header-includes:
+   - \usepackage{graphicx}
+---
+
+\newpage
+
+\section{Introdução}
+\section{Objetivo}
+\subsection{Objetivo Geral}
+\subsection{Objetivo específico}
+\section{Análise Descritiva}
+\subsection{Variáveis quantitativas}
+\subsection{Variáveis qualitativas}
+\section{Desenvolvimento}
+\subsection{Características populacionais}
+\subsubsection{Sexo}
+\subsubsection{Distribuição do sexo na amostra}
+\subsubsection{Distribuição do sexo por categoria}
+\paragraph{Figura 1 - Distribuição do gênero}
+\subsubsection{Origem da fortuna (Self-made ou herdeiro)}
+\subsubsection{Distribuição da variável na amostra}
+\paragraph{Figura 3 - Frequência absoluta Self-Made}
+\paragraph{Figura 4 - Frequência relativa Self-Made}
+\subsubsection{Origem da fortuna por gênero}
+\paragraph{Figura 5 - Frequência relativa do Gênero por Self-Made}
+\subsubsection{Origem da fortuna por Indústria}
+\paragraph{Figura 6 - Proporção de Self-Made por categoria}
+\subsubsection{Idade}
+\subsubsection{Idade por gênero}
+\paragraph{Figura 7 - Distribuição da idade dos bilionários por gênero}
+\subsubsection{Distribuição da idade em Self-Made}
+\paragraph{Figura 8 - Distribuição da idade dos bilionários pela origem da fortuna}
+\subsubsection{Correlação entre idade e patrimônio}
+\paragraph{Figura 9 - Relação entre idade e patrimônio}
+\subsection{Categoria / Indústria}
+\subsubsection{Distribuição dos bilionários e do patrimônio por indústria}
+\paragraph{Figura 10 - Distribuição dos bilionários por Indústria}
+\subsubsection{Relação entre indicadores de um país e bilionários}
+\subsubsection{Relação entre bilionários, PIB e população}
+\paragraph{Figura 11 - Regressão Linear entre PIB, quantidade de bilionários e população}
+\paragraph{Figura 12 - Gráfico de dispersão entre a quantidade de bilionários e o PIB}
+\paragraph{Figura 13 - Gráfico de dispersão entre a população e o PIB}
+\subsubsection{Relação entre expectativa de vida e bilionários}
+\paragraph{Figura 14 - Gráfico de dispersão entre a quantidade de bilionários e a expectativa de vida}
+\subsubsection{Relação entre matrículas no ensino superior e bilionários}
+\paragraph{Figura 15 - Gráfico de dispersão entre a quantidade de bilionários e matrículas no Ensino Superior}
+\subsection{Países}
+\subsubsection{Número de bilionários e proporção dos gêneros}
+\subsubsection{Patrimônio entre os países}
+\section{Referências}
+\section{Apêndice}
+\subsection{Tabelas}
+\subsection{Figuras}
+\subsection{Participação dos integrantes}
+
+\end{document}
