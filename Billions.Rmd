@@ -1,0 +1,666 @@
+---
+output:
+  pdf_document:
+  word_document: default
+  html_document: default
+  header-includes:
+   - \usepackage{graphicx}
+---
+
+\thispagestyle{empty}
+
+\begin{center}
+  {\huge Trabalho de Computação em Estatística \par}
+    \includegraphics[width=0.4\textwidth]{C:/Users/mathe/OneDrive/UnB/4° SEMESTRE/CE1/Trabalho/bandeira unb.png}
+    
+    \vspace{1cm}
+    {\LARGE Universidade de Brasília (UnB) \par}
+    \vspace{1.5cm}
+    {\huge Relatório sobre os bilionários \par}
+    \vspace{1.5cm}
+    {\Large Estudantes: Matheus Donito, João Pedro, Lara Silva \par}
+    {\Large Professor: Guilherme Souza Rodrigues \par}
+    
+    \vfill
+    
+    {\large Brasília, DF \par}
+    {14 de Dezembro, 2023}
+\end{center}
+
+\newpage
+
+\renewcommand{\contentsname}{Sumário}
+\tableofcontents
+\newpage
+\section{Introdução}
+
+Esta pesquisa, realizada por Nidula Elgiriyewithana, um estudante de ciência de dados, analisou um conjunto
+abrangente de dados contendo informações de 2640 bilionários. Destaca-se que 71,34% desses indivíduos
+alcançaram sua condição financeira por mérito próprio (self-made), enquanto 28,66% herdaram suas fortunas.
+O objetivo central desta investigação foi modelar e compreender os padrões subjacentes à distribuição de
+riqueza entre esses bilionários, explorando elementos como origem da fortuna, correlações geográficas, faixa
+etária e diferenças de gênero. Essa análise detalhada busca não apenas mapear a concentração de riqueza,
+mas também entender as dinâmicas complexas que impulsionam o sucesso financeiro em diferentes contextos.
+
+\newpage
+\section{Objetivo}
+\subsection{Objetivo Geral}
+
+O presente trabalho busca encontrar a distribuição de riqueza entre diferentes categorias e indústrias, revelando insights cruciais sobre onde está o setor com a maior parte dos bilionários. Além disso, busca-se encontrar, com esse estudo, uma análise econômica e geográfica da riqueza dos bilionários (Produto Interno Bruto - PIB, expectativa de vida e a relação da matrícula no ensino superior com a quantidade de bilionários), se o bilionário é self-made (sua fortuna foi construída, não herdada), a relação entre a idade, gênero e o acúmulo de patrimônio, por fim a diferença de gênero entre bilionários. Ao examinar essa distribuição, é possível compreender melhor as dinâmicas econômicas e as áreas que mais contribuem para a acumulação de riqueza, o que pode ser vital para estratégias de investimento, desenvolvimento econômico e políticas de redistribuição de recursos. Por fim, identifica-se insights sobre como os indicadores econômicos e de ensino contribuem para a riqueza do país quanto para a quantidade de bilionários, o quanto a idade impacta no desenvolvimento do patrimônio.
+
+\subsection{Objetivo específico}
+1. Apresentar a quantidade de bilionários e suas características (self-made, setor, gênero e idade) ;
+2. Verificar se há correlação entre o bilionário ser self-made sua idade e gênero;
+3. Verificar a distribuição de bilionários entre os países;
+4. Encontrar a relação entre PIB com a quantidade de bilionários e população;
+5. Analisar como a idade impacta no tamanho da fortuna dos bilionários.
+
+\newpage
+\section{Análise Descritiva}
+Com um banco de dados do Kaggle, na qual contém dados de milhares de bilionários e diversas características sobre cada um, desde variáveis qualitativas, como quantitativas. Utilizando-se da plataforma R e pela interface do RStudio foram construídos gráficos e tabelas para auxiliar a análise.
+
+\subsection{Variáveis quantitativas}
+
+  + finalWorth : O patrimônio líquido final do bilionário em dólares americanos.
+  + age: A idade do bilionário.
+  + gdp_country : Produto Interno Bruto (PIB) do país do bilionário.
+  + item gross_tertiary_education_enrollment : Matrícula no ensino superior no país do bilionário.
+  + item life_expectancy_country : Expectativa de vida no país do bilionário.
+  + item population_country: População do país do bilionário.
+
+\subsection{Variáveis qualitativas}
+
+  + category: a categoria ou setor em que opera o negócio do bilionário. 
+  + selfMade : Indica se o bilionário é self-made (Verdadeiro/Falso).
+  + item gender: O gênero do bilionário. 
+  
+\newpage  
+\section{Desenvolvimento}
+Esta pesquisa, realizada por Nidula Elgiriyewithana, um estudante de ciência de dados, analisou um conjunto abrangente de dados contendo informações de 2640 bilionários. Destaca-se que 71,34% desses indivíduos alcançaram sua condição financeira por mérito próprio, enquanto 28,66% herdaram suas fortunas. O objetivo central desta investigação foi modelar e compreender os padrões subjacentes à distribuição de riqueza entre esses bilionários, explorando elementos como origem da fortuna, correlações geográficas, faixa etária e diferenças de gênero. Essa análise detalhada busca não apenas mapear a concentração de riqueza, mas também entender as dinâmicas complexas que impulsionam o sucesso financeiro em diferentes contextos.
+\subsection{Características populacionais}
+\subsubsection{Sexo}
+\subsubsection{Distribuição do sexo na amostra}
+A amostra é composta por 2640 bilionários, sendo 337 mulheres e 2303 homens. É interessante apontar que pouco mais de 87% da amostra é masculina. Isso evidencia que existe uma desigualdade de gênero quando observa-se a alta classe mundial.
+```{r message=FALSE, echo=FALSE, error=FALSE}
+options(warn = -1)  
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(papaja)
+library(dplyr)
+library(knitr)
+library(scales)
+library(tinytex)
+```
+```{r echo=FALSE}
+bilionario <- read.csv( "Billionaires Statistics Dataset.csv", sep = ",")
+```
+```{r echo=FALSE}
+# Calcular as frequências de homens e mulheres
+freq <- table(bilionario$gender)
+
+# Criar o gráfico de barras com a quantidade para ambos os gêneros
+gen_bi <- ggplot(data.frame(gender = names(freq), Frequency = as.numeric(freq)), aes(x = gender, y = Frequency, fill = gender)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  scale_fill_manual(values = c("gold", "black")) +
+  labs(
+    title = 'Distribuição de Bilionários por Gênero',
+    x = 'Gênero',
+    y = 'Número de Bilionários',
+    fill = 'Gênero'
+  ) + 
+  guides(fill = FALSE)
+#Imprimindo
+print(gen_bi)
+```
+\begin{center}
+\subsubsection{Figura 1 - Distribuição do gênero}
+\end{center}
+
+
+```{r echo=FALSE}
+#Tabela sexo por categoria
+sex_categ <- bilionario %>%
+  mutate(gender = case_when(
+    gender == "F" ~ "Mulher",
+    gender == "M" ~ "Homem"))
+
+# Criar tabela de frequência absoluta
+tb_sex_categ <- table(sex_categ$category, sex_categ$gender)
+
+# Calcular frequência percentual
+tb_sex_category_prop <- prop.table(tb_sex_categ, margin = 1)
+
+# Combinação das tabelas de frequência absoluta e percentual
+tb_combined <- cbind(tb_sex_categ, tb_sex_category_prop)
+
+# Renomear colunas
+colnames(tb_combined) <- c("Mulher", "Homem", "Proporção Homem", "Proporção Mulher")
+
+# Mostrar a tabela
+kable(tb_combined)
+```
+\begin{center}
+\subsubsection{Tabela 1 - Distribuição do sexo entre as categorias}
+\end{center}
+
+
+\subsubsection{Distribuição do sexo por categoria}
+Tendo como base a tabela (Tabela 1)  e o gráfico (Figura 2) acima e a distribuição de mulheres na amostra, é possível notar que existe uma concentração masculina nos setores,  sendo o setor com maior proporção de mulheres o de comida e bebida (Food & Beverage), com 21,23%. Isso mostra como existe uma hegemonia masculina na indústria.
+\subsubsection{Falta uma tabela}
+```{r echo=FALSE}
+# Calculando a frequência de bilionários por categoria e gênero
+freq_table <- bilionario %>%
+  group_by(category, gender) %>%
+  summarise(count = n()) %>%
+  arrange(category)
+
+# Criando o gráfico de barras
+grafico_freq <- ggplot(freq_table, aes(x = category, y = count, fill = gender)) +
+  geom_bar(stat = "identity", position = "fill") +
+  labs(title = "Frequência de Bilionários por Categoria e Gênero", x = "Indústria", y = "Quantidade", fill = "Gênero") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(values = c("gold", "black"), labels = c("Mulheres", "Homens"))  # Defina as cores desejadas para cada gênero
+print(grafico_freq)
+``` 
+\begin{center}
+\subsubsection{Figura 2 - Frequência de bilionários por categoria e gênero}
+\end{center}
+
+\subsubsection{Origem da fortuna (Self-made ou herdeiro)}
+\subsubsection{Distribuição da variável na amostra}
+Há 828 bilionários herdeiros e 1812 bilionários self-made. Dessa forma, a maioria dos bilionários presentes no banco de dados são self-made (68,64%), mais que o dobro da quantidade de bilionários herdeiros.
+```{r echo=FALSE}
+# Contando a quantidade de bilionários self made e não self made
+contagem_selfmade <- sum(bilionario$selfMade == TRUE)
+contagem_nao_selfmade <- sum(bilionario$selfMade == FALSE)
+
+# Gráficos de barras
+bilionario$color <- ifelse(bilionario$selfMade == TRUE, "gold", "black")
+
+ori_freq <- ggplot(data = bilionario, aes(x = selfMade, fill = color)) +
+  geom_bar() +
+  labs(x = "Origem da fortuna", y = "Frequência absoluta") +
+  scale_x_discrete(labels = c("Herdeiro", "Self-Made")) +
+  scale_fill_identity()
+print(ori_freq)
+```
+\begin{center}
+\subsubsection{Figura 3 - Frequência absoluta Self-Made}
+\end{center}
+
+```{r echo=FALSE}
+# Calculando a frequência relativa
+freq_rel <- prop.table(table(bilionario$selfMade))
+
+# Criando o gráfico de barras
+ori_rel <- ggplot(data = data.frame(origem = names(freq_rel), freq_rel), aes(y = "", x = freq_rel, fill = origem)) +
+  geom_bar(stat = "identity", width = 1) +
+  labs(x = "Frequência relativa", y = "Origem da fortuna", fill = "Origem") +
+  scale_fill_manual(values = c("black", "gold"), labels = c("Herdeiro", "Self-Made")) +
+  theme_minimal() +
+  coord_flip()
+print(ori_rel)
+```
+\begin{center}
+\subsubsection{Figura 4 - Frequência relativa Self-Made}
+\end{center}
+\subsubsection{Origem da fortuna por gênero}
+Pela tabela, é possível observar que a proporção de bilionárias herdeiras mulheres é de 71%, logo, é discrepante em relação à proporção de bilionários herdeiros homens, apenas 25%. Dessa forma, dentre todos os 2640 bilionários presentes na amostra, apenas 96 são mulheres selfmade. Além disso, é possível dizer que existe uma associação mediana entre o gênero e o fato da pessoa ser herdeira ou não, uma vez que o Coeficiente de Contingência foi de 0,44.
+
+```{r echo=FALSE}
+# Transformar os valores de selfMade para "Não Herdeiro" e "Herdeiro"
+self_category <- bilionario %>%
+  mutate(selfMade = ifelse(selfMade == TRUE, "Self-Made", "Herdeiro"),
+         gender = ifelse(gender == "M", "Homem", "Mulher"))
+
+# Criar tabela de contagem
+tb_self_category <- table(self_category$gender, self_category$selfMade)
+
+# Transformar em proporção
+prop_table <- prop.table(tb_self_category, margin = 1) * 100
+
+# Mostrar a tabela
+kable(prop_table)
+```
+```{r echo=FALSE}
+# Transformando a coluna 'selfMade' para fator para facilitar a visualização
+bilionario$selfMade <- factor(bilionario$selfMade, labels = c("Herdeiro", "Self-Made"))
+
+# Criando o gráfico de barras
+ori_gen <- ggplot(data = bilionario, aes(x = selfMade, fill = gender)) +
+  geom_bar(position = "fill") +
+  labs(x = "Origem da fortuna", y = "Frequência relativa",  fill = "Genêro") +
+  scale_fill_manual(values = c("gold", "black"), labels = c("Homem", "Mulher")) +
+  scale_x_discrete(labels = c("Herdeiro", "Self-Made")) 
+print(ori_gen)
+```
+\begin{center}
+\subsubsection{Figura 5 - Frequência relativa do Gênero por Self-Made}
+\end{center}
+
+```{r echo=FALSE}
+# Transformar os valores de selfMade para "Não Herdeiro" e "Herdeiro"
+self_category <- bilionario %>%
+  mutate(selfMade = ifelse(selfMade == "Self-Made", "Self-Made", "Herdeiro"),
+         gender = ifelse(gender == "M", "Homem", "Mulher"))
+
+# Criar tabela de contagem
+tb_self_category <- table(self_category$gender, self_category$selfMade)
+
+# Transformar em proporção
+prop_table <- prop.table(tb_self_category, margin = 1) * 100
+
+# Mostrar a tabela
+kable(prop_table)
+```
+
+\begin{center}
+\subsubsection{Tabela 2 - Distribuição dos herdeiros por gênero.}
+\end{center}
+
+```{r echo=FALSE}
+# Criando a tabela
+tabela <- data.frame(
+  "Coeficiente de Spearman" = "0,44"
+)
+
+# Exibindo a tabela formatada com kable
+kable(tabela)
+```
+
+\begin{center}
+\subsubsection{Tabela 3 - Distribuição dos herdeiros por gênero.}
+\end{center}
+
+\subsubsection{Origem da fortuna por Indústria}
+Analisando o gráfico e a tabela acima, é possível notar que apenas uma categoria de indústria possui maioria em bilionários herdeiros (diversas), com 55,61% como frequência relativa. E que todas as outras possuem bilionários self-made como maioria, com destaque para a indústria de tecnologia, com 92,99% e telecomunicações, com 83,87%.
+
+A distribuição de bilionários self-made por setor revela uma disparidade significativa em diversas indústrias. Enquanto setores como tecnologia e telecomunicações demonstram uma presença dominante de indivíduos que construíram suas fortunas de forma independente, com 92,99% e 83,87% dos bilionários sendo self-made, respectivamente. Enquanto outros campos, como construção e alimentação, exibem uma presença comparativamente menor de bilionários que construíram suas próprias fortunas, com 48,89% e 48,58% dos bilionários sendo herdeiros, respectivamente, têm uma distribuição mais equilibrada entre aqueles que construíram suas fortunas por conta própria e aqueles que as herdaram. Essa variedade na distribuição sugere uma intersecção complexa entre os setores e os caminhos para o status bilionário.
+
+```{r echo=FALSE}
+# Calculando a frequência de bilionários por categoria e gênero
+freq_table <- bilionario %>%
+  group_by(category, selfMade) %>%
+  summarise(count = n()) %>%
+  arrange(category)
+
+# Criando o gráfico de barras
+grafico_freq <- ggplot(freq_table, aes(x = category, y = count, fill = selfMade)) +
+  geom_bar(stat = "identity", position = "fill") +
+  labs(title = "Frequência de Bilionários por Categoria e Origem da fortuna", x = "Indústria", y = "Frequência", fill = "Origem") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(values = c("black", "gold"), labels = c("Herdeiro", "Self-Made"))  # Defina as cores desejadas para cada gênero
+print(grafico_freq)
+```
+\begin{center}
+\subsubsection{Figura 6 - Proporção de Self-Made por categoria}
+\end{center}
+
+\subsubsection{Idade}
+\subsubsection{Idade por gênero}
+Analisando o gráfico “Distribuição da idade dos bilionários por gênero” e a tabela “Caracteristicas da idade por sexo”, é perceptível que os homens bilionários são ligeiramente mais velhos que as mulheres bilionárias. Apesar de que há mais outliers de homens com idade abaixo do limite inferior do boxplot do que de mulheres. É interessante apontar, além de tudo isso, que as idades entre os gêneros são praticamente as mesmas.. Isso fica claro  quando a tabela evidencia que a idade mediana dos homens 65 e das mulheres 63, e ambos os gêneros com desvio padrão parecidos.
+```{r echo=FALSE}
+idade_gen <- ggplot(bilionario, aes(x = gender, y = age, fill = gender)) +
+  geom_boxplot() +
+  labs(
+    title = "Distribuição da Idade dos Bilionários por Gênero",
+    x = "Gênero",
+    y = "Idade",
+  ) +
+  guides(fill = FALSE) +
+  scale_fill_manual(values = c("black", "gold"), labels = c("Homens", "Mulheres")) +
+  theme_minimal()
+print(idade_gen)
+```
+\begin{center}
+\subsubsection{Figura 7 - Distribuição da idade dos bilionários por gênero}
+\end{center}
+
+\subsubsection{Distribuição da idade em Self-Made}
+Analisando o gráfico “Distribuição da idade dos bilionários pela origem da fortuna”, é perceptível que os bilionários self-made são ligeiramente mais novos que os bilionários herdeiros. Pela tabela é visível que a idade não varia muito entre herdeiros e não herdeiros, possuindo uma mediana de 68 e 64 respectivamente, com desvio padrão parecido entre os dois grupos. Apesar disso, os bilionários herdeiros compõem a maior parte dos bilionários menores que 25 tendo uma presença maior de outliers do que em relação aos bilionários self-made. A medida de associação R quadrado entre idade e self-made é 0,002 muito fraca ou quase nula.
+```{r echo=FALSE}
+self_herd <- ggplot(bilionario, aes(x = selfMade, y = age, fill = selfMade)) +
+  geom_boxplot() +
+   scale_x_discrete(labels = c("Herdeiro", "Self-Made")) +
+  labs(
+    title = "Distribuição da Idade dos Bilionários pela origem da fortuna",
+    x = "Origem da fortuna",
+    y = "Idade"
+  ) +
+  guides(fill = FALSE) +
+  scale_fill_manual(values = c("black", "gold"), labels = c("Herdeiro", "Self-Made")) +
+  theme_minimal()
+print(self_herd)
+```
+\begin{center}
+\subsubsection{Figura 8 - Distribuição da idade dos bilionários pela origem da fortuna}
+\end{center}
+\subsubsection{Correlação entre idade e patrimônio}
+Ao analisar a relação entre a idade e o patrimônio líquido dos bilionários, a correlação de Spearman de 14,40% sugere uma associação positiva, mas não linear, entre essas variáveis. Em contraste com a correlação de Pearson, que mede a força e direção de uma relação linear, a correlação de Spearman avalia a relação monotônica, ou seja, se as variáveis tendem a aumentar ou diminuir juntas, porém não necessariamente a uma taxa constante. 
+
+A correlação de 14,40% indica que, à medida que a idade dos bilionários aumenta, há uma tendência geral de que o patrimônio líquido também aumente, mas essa relação não é linear. Em outras palavras, a idade e o patrimônio líquido dos bilionários têm uma associação positiva, mas as mudanças em uma variável não são preditivas de mudanças proporcionais na outra. 
+
+É crucial ressaltar que a correlação de Spearman de 14,40% indica uma associação fraca entre idade e patrimônio líquido. Isso sugere que outros fatores além da idade têm um impacto substancial no patrimônio líquido dos bilionários. É possível que outros aspectos, como educação, oportunidades de negócios, investimentos estratégicos, entre outros, desempenhem papéis mais significativos na determinação do patrimônio líquido, superando a influência da idade. Portanto, embora haja uma associação positiva entre idade e patrimônio líquido, é importante reconhecer que essa relação não é linear e que outros fatores também desempenham um papel crucial na determinação do patrimônio líquido dos bilionários.
+```{r echo=FALSE}
+# Criando gráfico de dispersão
+patrimonio_idade <- ggplot(bilionario, aes(x = age, y = finalWorth)) +
+  geom_point(aes(color = finalWorth), size = 1.5) +
+  labs(title = "Idade vs. Patrimônio de Bilionários", x = "Idade", y = "Patrimônio em milhões ($USD)") +
+  theme_minimal() +
+  scale_color_gradient(low = "gold", high = "black") +
+  guides(color = FALSE)
+#Imprimindo o gráfico
+print(patrimonio_idade)
+```
+\begin{center}
+\subsubsection{Figura 9 - Relação entre idade e patrimônio}
+\end{center}
+```{r echo=FALSE}
+# Criando o novo dataframe com as colunas 'finalWorth' e 'age'
+bilionariospearman <- data.frame(
+  finalWorth = as.numeric(bilionario$finalWorth),
+  age = as.numeric(bilionario$age)
+)
+
+ #Removendo NA em age
+bilionariospearman <- bilionariospearman[!is.na(bilionariospearman$age), ]
+
+# Calculando a correlação de Spearman
+correlacao_spearman <- cor(bilionariospearman$finalWorth, bilionariospearman$age, method = "spearman")
+
+# Criando a tabela
+tabela <- data.frame(
+  "Coeficiente de Spearman" = correlacao_spearman
+)
+
+# Exibindo a tabela formatada com kable
+kable(tabela)
+```
+\begin{center}
+\subsubsection{Tabela 4 - Coeficiente de Spearman}
+\end{center}
+
+\subsection{Categoria / Indústria}
+\subsubsection{Distribuição dos bilionários e do patrimônio por indústria}
+Olhando para a tabela “Distribuição dos bilionários por Indústria” e para o gráfico (Figura 9 ), é possível notar que a área de finanças e investimentos abriga a maior proporção de bilionários, totalizando 14,09% de todos os bilionários na amostra. Em seguida, estão manufatura, tecnologia e moda, representando, respectivamente, 12,27%, 11,89% e 10,08%.
+
+É interessante observar, além do que foi mencionado anteriormente, que existe uma diferença discrepante na quantidade de bilionários por setor. Enquanto a indústria de finanças e investimentos contém 372 bilionários, os setores de construção e engenharia, jogos de azar e cassinos, logísticas, esportes e telecomunicação apresentam menos de 50. Dessa forma, finanças e investimentos, além de representar 14,09% dos bilionários, ele sozinho contém mais que o dobro da quantidade dos 5 setores citados anteriormente.
+
+ No entanto, em termos de patrimônio total, as indústrias líderes são tecnologia, moda, finanças e alimentação, juntas compreendendo 54% do patrimônio total dos bilionários nessas áreas da amostra. Isso é evidenciado no gráfico a seguir.
+
+```{r echo=FALSE}
+# Convertendo a coluna 'category' para fator/categórica
+bilionario$category <- as.factor(bilionario$category)
+
+# Criando uma paleta de cores gradativa de dourado a preto
+cores <- colorRampPalette(c("gold", "black"))(length(levels(bilionario$category)))
+
+# Criando o gráfico de barras com a paleta de cores gradativa
+grafico <- ggplot(bilionario, aes(x = category, fill = category)) +
+  geom_bar() +
+  labs(title = "Quantidade de Bilionários por Indústria", x = "Indústria", y = "Quantidade") +
+  scale_fill_manual(values = cores) +  # Usando a paleta de cores definida
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  guides(fill = FALSE)
+
+#Imprimindo o gráfico
+print(grafico)
+```
+\begin{center}
+\subsubsection{Figura 10 - Distribuição dos bilionários por Indústria}
+\end{center}
+
+\subsection{Correlação entre indicadores de um país e bilionários}
+\subsubsection{Relação entre bilionários, PIB e população}
+A partir dos gráficos de dispersão acima pode-se observar a relação linear entre PIB e a quantidade de bilionários, com ele é possível inferir uma correlação positiva, ou seja, quanto maior a quantidade de bilionários maior será o PIB do país. Além disso, no outro gráfico é possível enxergar uma certa correlação linear, para verificarmos a relação dessas duas variáveis no PIB se torna interessante um modelo de regressão linear.
+$$
+  PIB = \beta_0 + \beta_1\ quantidade\_bilionários + \beta_2\ população\_país \\
+  $$
+  $$
+  PIB = 113129875908,8 + 29930580898,9*quantidade\_bilionários + 772.7 * população\_país \\$$
+$$  
+  R^2=0,94
+$$
+\begin{center}
+\subsubsection{Figura 11 - Regressão Linear entre PIB, quantidade de bilionários e população}
+\end{center}
+O intercepto representa o valor esperado do PIB quando todas as variáveis independentes (quantidade de bilionários e população do país) são zero. Neste caso, sugere-se que, mesmo na ausência de bilionários e população, o PIB seria aproximadamente U$113,13 bilhões. Porém, na prática, este valor pode não ter um significado prático real.
+
+Com relação, aos coeficientes das variáveis independentes referem-se a quanto o PIB varia a cada unidade a mais dessa variável. O coeficiente da quantidade de bilionários sugere a mudança esperada no PIB próximo de U\$29,93 bilhões quando a quantidade de bilionários aumenta em uma unidade, mantendo a população do país constante. Enquanto, o coeficiente da população do país indica a mudança esperada no PIB de aproximadamente U$772,7 quando a população do país aumenta em uma unidade, mantendo a quantidade de bilionários constante.
+	
+Considerando um conjunto de dados que contempla 44 bilionários e uma população de 212 milhões, a projeção do Produto Interno Bruto (PIB) para o Brasil é estimada em aproximadamente U\$1,59 trilhões, conforme um modelo que considera a relação entre a quantidade de bilionários, a população e o PIB. No entanto, o valor real do PIB apresentado é de U$1,84 trilhões. Essa discrepância sugere uma precisão de 86% para modelo e o valor real observado, indicando possíveis variáveis ou fatores não considerados na modelagem que certamente influenciam a economia do país.
+
+```{r echo=FALSE}
+# Remover o caractere "$" da coluna gdp_country e converter para numérico
+bilionario$gdp_clean <- as.numeric(str_remove_all(bilionario$gdp_country, "\\$|,"))
+
+bilionario$gdp_clean <- as.numeric(gsub("[^0-9.]", "", bilionario$gdp_clean))
+
+# Calcular a quantidade de bilionários por país
+quantidade_por_pais <- bilionario %>%
+  group_by(country) %>%
+  summarise(quantidade_bilionarios = n()) %>%
+  left_join(bilionario %>% 
+              select(country, gross_primary_education_enrollment_country, gross_tertiary_education_enrollment) %>% 
+              distinct(),
+            by = "country")
+# Junção para adicionar as variáveis ao dataframe quantidade_por_pais
+quantidade_por_pais <- quantidade_por_pais %>%
+  left_join(bilionario %>% select(country, cpi_country) %>% distinct(), by = "country") %>%
+  left_join(bilionario %>% select(country, life_expectancy_country) %>% distinct(), by = "country") %>%
+  left_join(bilionario %>% select(country, total_tax_rate_country) %>% distinct(), by = "country") %>%
+  left_join(bilionario %>% select(country, population_country) %>% distinct(), by = "country")
+
+
+# Juntar o dataframe quantidade_por_pais com o PIB por país
+quantidade_por_pais <- left_join(quantidade_por_pais, bilionario %>% select(country, gdp_clean) %>% distinct(), by = "country")
+
+quantidade_por_pais$gdp_clean <- as.numeric(quantidade_por_pais$gdp_clean)
+```
+```{r echo=FALSE}
+novo_dataframe <- subset(quantidade_por_pais, !is.na(gdp_clean))
+
+# Visualizando as primeiras linhas do novo dataframe
+print(novo_dataframe)
+
+options(scipen = 999)
+# Criar uma paleta de cores gradativa de dourado a preto
+cores <- colorRampPalette(c("gold", "black"))(nrow(quantidade_por_pais))
+
+quant_pib <- ggplot(novo_dataframe, aes(x = quantidade_bilionarios, y = gdp_clean, color = gdp_clean)) +
+  geom_point(size = 1.5) +
+  labs(x = "Quantidade de Bilionários", y = "PIB") +
+  ggtitle("Quantidade de Bilionários x PIB") +
+  scale_y_continuous(labels = label_number(scale = 1e-12, suffix = "T")) +
+  scale_color_gradientn(colors = cores) +
+  geom_smooth(method = "lm", se = FALSE, color = "gray") +
+  guides(color = FALSE)
+
+# Impressão do gráfico no PDF
+print(quant_pib)
+
+correlacao <- cor(novo_dataframe$gdp_clean, novo_dataframe$quantidade_bilionarios, method = "pearson")
+
+
+print(correlacao)
+# Contando a quantidade total de bilionários no novo dataframe
+total_bilionarios <- sum(novo_dataframe$quantidade_bilionarios)
+
+# Exibindo o total de bilionários
+print(total_bilionarios)
+
+# Criar o modelo de regressão
+modelo_regressao <- lm(gdp_clean ~ quantidade_bilionarios + population_country, data = novo_dataframe)
+
+# Visualizar os resultados do modelo
+summary(modelo_regressao)
+```
+\begin{figure}[h]
+    \centering
+    \includegraphics{C:/Users/mathe/OneDrive/UnB/Dispersao2.png}
+    % \caption{Sua legenda aqui}
+    \label{fig:my-figure}
+\end{figure}
+
+\begin{center}
+\subsubsection{Figura 12 - Gráfico de dispersão entre a quantidade de bilionários e o PIB}
+\end{center}
+
+```{r echo=FALSE}
+# Criar uma paleta de cores gradativa de dourado a preto
+cores <- colorRampPalette(c("gold", "black"))(nrow(quantidade_por_pais))
+
+quant_pib2 <- ggplot(novo_dataframe, aes(x = population_country, y = gdp_clean, color = gdp_clean)) +
+  geom_point(size = 1.5) +
+  labs(x = "População", y = "PIB") +
+  ggtitle("População x PIB") +
+  scale_y_continuous(labels = label_number(scale = 1e-12, suffix = "T")) +
+  scale_x_continuous(labels = label_number(scale = 1e-6, suffix = "M")) +
+  scale_color_gradientn(colors = cores) +
+  geom_smooth(method = "lm", se = FALSE, color = "gray") +
+  guides(color = FALSE)
+
+# Impressão do gráfico no PDF
+pdf("meu_grafico.pdf")
+print(quant_pib2)
+```
+\begin{figure}[h]
+    \centering
+    \includegraphics{C:/Users/mathe/OneDrive/UnB/4° SEMESTRE/CE1/Trabalho/Dispersao1.png}
+    % \caption{Sua legenda aqui}
+    \label{fig:my-figure}
+\end{figure}
+\begin{center}
+\subsubsection{Figura 13 - Gráfico de dispersão entre a população e o PIB}
+\end{center}
+
+\subsubsection{Relação entre expectativa de vida e bilionários}
+Embora haja uma certa correlação positiva entre o número de bilionários e a expectativa de vida de um país, essa relação é tênue. Como demonstrado no gráfico abaixo, à medida que a expectativa de vida aumenta, também aumenta a quantidade de bilionários. 
+
+Os pontos dispersos formam uma nuvem irregular, sugerindo a ausência de uma relação linear clara entre as variáveis. No entanto, através da correlação de Spearman, é possível identificar uma correlação positiva e fraca de 0,319. Isso indica que, embora exista uma correlação, ela não é forte.
+Gráfico de dispersão entre expectativa de vida e quantidade de bilionários no país
+```{r echo=FALSE}
+# Criar o gráfico de dispersão com cores diferenciadas para maiores e menores valores de PIB
+quant_pib <- ggplot(quantidade_por_pais, aes(x = life_expectancy_country, y = quantidade_bilionarios, color = gdp_clean)) +
+  geom_point(size = 1.5) +
+  labs(x = "Expectativa de vida", y = "Quantidade de Bilionários") +
+  ggtitle("Quantidade de Bilionários x Expectativa de Vida") +
+    scale_color_gradient(low = "gold", high = "black") +
+  guides(color = FALSE)
+
+# Exibir o gráfico
+print(quant_pib)
+```
+\begin{center}
+\subsubsection{Figura 14 - Gráfico de dispersão entre a quantidade de bilionários e a expectativa de vida}
+\end{center}
+```{r echo=FALSE}
+# Criando o novo dataframe com as colunas 'finalWorth' e 'age'
+bilionariospearman2 <- data.frame(
+  life_expectancy_country = as.numeric(quantidade_por_pais$life_expectancy_country),
+  quantidade_bilionarios = as.numeric(quantidade_por_pais$quantidade_bilionarios)
+)
+
+ #Removendo NA em age
+bilionariospearman2 <- bilionariospearman2[!is.na(bilionariospearman2$life_expectancy_country), ]
+
+# Calculando a correlação de Spearman
+correlacao_spearman2 <- cor(bilionariospearman2$life_expectancy_country, bilionariospearman2$quantidade_bilionarios, method = "spearman")
+
+# Criando a tabela
+tabela2 <- data.frame(
+  "Coeficiente de Spearman" = correlacao_spearman2
+)
+
+# Exibindo a tabela formatada com kable
+kable(tabela2)
+```
+\begin{center}
+\subsubsection{Tabela 5 - Coeficiente de Spearman}
+\end{center}
+
+\subsubsection{Relação entre matrículas no ensino superior e bilionários}
+Assim, como a correlação entre a expectativa de vida e a quantidade de bilionários, o número de matrículas no ensino superior revela insights interessantes sobre como essa variável se interliga com a quantidade de bilionários. É notável que, ao analisar essa dinâmica, seja crucial considerar não apenas a simples associação, mas também a natureza não linear dessas relações.
+
+A utilização do coeficiente de Spearman se faz necessária quando lidamos com relações que não seguem uma forma linear, permitindo uma avaliação mais precisa da associação entre essas variáveis. No entanto, mesmo com essa análise mais complexa, a correlação identificada, de 0,319, aponta para uma conexão positiva e fraca entre esses fatores. Isso significa que, em geral, à medida que a quantidade de matrículas no ensino superior aumenta, a tendência é que o número de bilionários também aumente.
+
+```{r echo=FALSE}
+# Criar o gráfico de dispersão com cores diferenciadas para maiores e menores valores de PIB
+quant_pib <- ggplot(quantidade_por_pais, aes(x = gross_tertiary_education_enrollment , y = quantidade_bilionarios, color = gdp_clean)) +
+  geom_point(size = 1.5) +
+  labs(x = "Matrículas no Ensino Superior (em milhões)", y = "Quantidade de Bilionários") +
+  ggtitle("Quantidade de Bilionários x Matrículas no Ensino Superior") +
+    scale_color_gradient(low = "gold", high = "black") +
+  guides(color = FALSE)
+
+# Exibir o gráfico
+print(quant_pib)
+```
+\begin{center}
+\subsubsection{Figura 15 - Gráfico de dispersão entre a quantidade de bilionários e matrículas no Ensino Superior}
+\end{center}
+```{r echo=FALSE}
+# Criando o novo dataframe com as colunas 'finalWorth' e 'age'
+bilionariospearman3 <- data.frame(
+  gross_tertiary_education_enrollment  = as.numeric(quantidade_por_pais$gross_tertiary_education_enrollment),
+    gross_primary_education_enrollment_country   = as.numeric(quantidade_por_pais$gross_primary_education_enrollment_country ),
+  quantidade_bilionarios = as.numeric(quantidade_por_pais$quantidade_bilionarios)
+)
+
+ #Removendo NA em age
+bilionariospearman3 <- bilionariospearman3[!is.na(bilionariospearman3$gross_tertiary_education_enrollment), ]
+
+# Calculando a correlação de Spearman
+correlacao_spearman3 <- cor(bilionariospearman3$gross_tertiary_education_enrollment, bilionariospearman3$quantidade_bilionarios, method = "spearman")
+
+# Criando a tabela
+tabela3 <- data.frame(
+  "Coeficiente de Spearman" = correlacao_spearman3
+)
+
+# Exibindo a tabela formatada com kable
+kable(tabela3)
+```
+\begin{center}
+\subsubsection{Tabela 6 - Coeficiente de Spearman}
+\end{center}
+\subsection{Países}
+Para essa análise, foram considerados os oito países com maior número de bilionários e patrimônio. Para calcular o patrimônio foram somados os valores patrimoniais de todas as indústrias do país. 
+\subsubsection{Número de bilionários e proporção dos gêneros}
+Tendo como base a tabela acima, é possível notar que existe uma concentração de bilionários nos Estados Unidos e China que, as duas maiores economias do mundo. Se somado o número de bilionários nos dois países, encontra-se um número equivalente a 48% da amostra. Essa diferença se torna ainda mais evidente quando é realizada uma comparação entre o segundo país com maior número de bilionários com o terceiro, onde observa-se que a China possui três vezes mais bilionários que a Índia.
+
+Olhando para os gêneros, é notório que existe uma concentração masculina nos bilionários, sendo o país com maior concentração de mulheres a Alemanha, com 26,47%. O caso mais extremo da amostra é a Rússia, onde mais de 98% dos bilionários são homens.
+
+\subsubsection{Patrimônio entre os países}
+A tabela mostra como a distribuição de patrimônio acontece de maneira desigual entre os países. Somente os Estados Unidos concentram quase 38% de todo o patrimônio da amostra. Quando comparado com a China, a segunda com maior patrimônio, os Estados Unidos apresentam 2,5 vezes mais patrimônio. 
+
+\newpage
+\section{Conclusão}
+Através do banco de dados bilionários disponibilizado pela plataforma Kaggle, realizado por Nidula Elgiriyewithana. Modelamos informações de 2640 bilionários para extrairmos e compreendermos padrões relacionados à distribuição de riqueza entre eles.
+
+Ao destrinchar o banco de dados, percebe-se que há discrepância entre homens (2303) e mulheres (337) na amostra. Essa discrepância é acentuada quando analisamos a influência do gênero em cada setor. Visto que estes possuem pelo menos 78% de homens em sua composição, com destaque para o setor de telecomunicação, que não há representação feminina, seguido pelo setor de investimentos e finanças assim como tecnologia, com apenas 8,06% e 9,55% respectivamente.
+
+O patrimônio dos bilionários tem correlação positiva com a idade dos mesmo, porém é uma relação fraca e não linear dado que o coeficiente de Spearman é 0,144. Com relação a ser self-made e a idade dos bilionários, os herdeiros são ligeiramente mais velhos, há mais bilionários mais novos herdeiros do que self-made, sendo o bilionário herdeiro mais novo de apenas 18 anos, 10 anos mais novo que o bilionário self-made mais novo. 
+
+Quanto à idade dos homens e do gênero, apesar de serem ligeiramente mais velhos, há uma quantidade considerável de outliers de homens bilionários com idade inferior ao limite inferior do boxplot em comparação com as bilionárias. Além disso, a quantidade de herdeiras mulheres compõem 71% das bilionárias, enquanto os bilionários homens 75% são self-made. A correlação entre gênero e self-made, é positiva e média entre as variáveis, visto que o coeficiente de contingência é 0,44.
+
+A distribuição de herdeiros e self-made por indústria é desigual. Apesar de todas elas possuírem maioria em self-made, com exceção o setor “Diversified”, com 44,39% de self-made contra a indústria de tecnologia e telecomunicações que apresentam 92,99% e 83,87% de bilionários self-made respectivamente. Além disso, certos setores apresentam uma certa concentração de patrimônio apesar de conter menos bilionários, como, o setor da moda que se encontra no segundo setor com maior patrimônio de bilionários tem 106 bilionários há menos do que o setor financeiro com 372 bilionários e um patrimônio 5,52% menor que o da moda.
+
+Analisando o gráfico de dispersão entre a quantidade de bilionários, população e o PIB percebe-se que há uma relação linear entre eles. Com a o modelo de regressão linear entre essas variáveis o PIB é explicado em 0,94 pelas variáveis observadas quantidade de bilionários e população, no qual o país que não tem bilionários e nem população tem um PIB esperado de U\$113,1 bilhões e aumentaria em U\$29,9 bilhões para cada bilionários a mais no país e aumentaria em U$772,7 para cada integrante do país.
+
+Por fim, a distribuição de bilionários entre os países demonstra um valor esperado no qual existe uma concentração nas duas maiores economias do mundo, Estados Unidos e China, no qual os dois juntos apresentam 48,37% dos bilionários dos 78 países na amostra. Além disso, o patrimônio dos bilionários desses dois países é 9,52% maior do que o patrimônio dos bilionários de todos os outros países.
+
+\newpage
+\section{Referências}
+Base de dados - https://www.kaggle.com/datasets/nelgiriyewithana/billionaires-statistics-dataset
+\newpage
+\subsection{Participação dos integrantes}
+Matheus Donito (22/1018307) - Relatório, gráficos e formatação 
+
+João Pedro Vieira (22/1018281) - Relatório e tabelas 
+
+Lara Siqueira (22/1029122) - Apoio  
