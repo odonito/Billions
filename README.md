@@ -1,4 +1,2 @@
 # Billions
-Análise de Bilionários
-
-aasacascasfa sd sadas sdadasdasdad
+O presente estudo busca entender como os bilionários afetam a riqueza do país (PIB)
